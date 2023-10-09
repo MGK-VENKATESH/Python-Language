@@ -1,0 +1,657 @@
+from turtle import *
+import turtle as tur
+import time
+
+turt = tur.Turtle()
+turt.speed(0)
+tur.title("MY DAD BIRTHDAY")
+turt.width(8)
+turt.color("navajo white")
+
+
+new = tur.getscreen()
+
+
+
+
+new.bgcolor("indigo")
+
+
+turt.left(180)
+turt.penup()
+turt.forward(300)
+turt.right(90)
+turt.forward(100)
+turt.pendown()
+
+# Display H
+
+turt.forward(50)
+turt.right(90)
+turt.forward(50)
+turt.left(90)
+turt.forward(50)
+turt.left(90)
+
+turt.penup()
+turt.forward(50)
+turt.left(90)
+turt.pendown()
+turt.forward(50)
+turt.left(90)
+turt.forward(50)
+turt.right(90)
+turt.forward(50)
+
+# Display A
+
+turt.penup()
+turt.left(90)
+turt.forward(15)
+turt.pendown()
+turt.left(70)
+turt.forward(110)
+turt.right(70)
+turt.right(70)
+turt.forward(110)
+turt.left(180)
+turt.forward(55)
+turt.left(70)
+turt.forward(38)
+turt.left(70)
+turt.penup()
+turt.forward(55)
+turt.left(110)
+
+turt.forward(100)
+
+# Display P
+
+turt.left(90)
+turt.pendown()
+turt.forward(100)
+turt.right(90)
+turt.forward(50)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(40)
+turt.right(70)
+turt.forward(20)
+turt.right(20)
+turt.forward(50)
+turt.left(90)
+turt.forward(50)
+turt.left(90)
+turt.penup()
+turt.forward(100)
+
+# Display P
+
+turt.left(90)
+turt.pendown()
+turt.forward(100)
+turt.right(90)
+turt.forward(50)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(40)
+turt.right(70)
+turt.forward(20)
+turt.right(20)
+turt.forward(50)
+turt.left(90)
+turt.forward(50)
+turt.left(90)
+turt.penup()
+turt.forward(100)
+
+# Display Y
+
+turt.forward(20)
+turt.pendown()
+turt.left(90)
+turt.forward(50)
+turt.left(30)
+turt.forward(60)
+turt.backward(60)
+turt.right(60)
+turt.forward(60)
+turt.backward(60)
+turt.left(30)
+
+# go to Home
+
+turt.penup()
+turt.home()
+
+turt.color("snow")
+new.bgcolor("purple")
+# setting second row
+
+turt.backward(300)
+turt.right(90)
+turt.forward(60)
+turt.left(180)
+
+# Display B
+
+
+turt.pendown()
+turt.forward(100)
+turt.right(90)
+turt.forward(40)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(40)
+turt.right(70)
+turt.forward(20)
+turt.right(20)
+turt.forward(40)
+turt.backward(40)
+turt.left(180)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(40)
+turt.right(70)
+turt.forward(20)
+turt.right(20)
+turt.forward(40)
+turt.right(90)
+turt.forward(10)
+turt.penup()
+
+turt.forward(90)
+turt.right(90)
+turt.forward(80)
+turt.pendown()
+
+
+#display I
+
+
+turt.forward(70)
+turt.backward(35)
+turt.right(90)
+turt.forward(100)
+turt.left(90)
+turt.forward(35)
+turt.left(180)
+turt.forward(70)
+turt.penup()
+turt.right(180)
+turt.forward(90)
+turt.left(90)
+turt.forward(100)
+turt.pendown()
+
+
+
+#display R
+
+turt.right(90)
+turt.forward(40)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(30)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(50)
+turt.right(90)
+turt.forward(50)
+turt.right(180)
+turt.forward(95)
+turt.right(180)
+turt.forward(50)
+turt.right(90)
+turt.forward(40)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(43)
+turt.penup()
+turt.left(90)
+turt.forward(10)
+turt.left(90)
+turt.forward(100)
+turt.right(90)
+turt.pendown()
+
+#display T
+
+turt.forward(80)
+turt.right(180)
+turt.forward(40)
+turt.left(90)
+turt.forward(100)
+turt.penup()
+turt.left(90)
+turt.forward(60)
+turt.left(90)
+turt.pendown()
+
+
+#dislay H
+
+turt.forward(50)
+turt.right(90)
+turt.forward(50)
+turt.left(90)
+turt.forward(50)
+turt.left(90)
+
+turt.penup()
+turt.forward(50)
+turt.left(90)
+turt.pendown()
+turt.forward(50)
+turt.left(90)
+turt.forward(50)
+turt.right(90)
+turt.forward(50)
+turt.penup()
+turt.left(90)
+turt.forward(20)
+turt.pendown()
+
+
+
+#display D
+
+turt.left(90)
+turt.forward(100)
+turt.right(90)
+turt.forward(30)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(80)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(43)
+
+
+
+turt.penup()
+turt.left(180)
+turt.forward(70)
+turt.pendown()
+
+#display A
+
+turt.left(70)
+turt.forward(110)
+turt.right(70)
+turt.right(70)
+turt.forward(110)
+turt.left(180)
+turt.forward(55)
+turt.left(70)
+turt.forward(38)
+turt.left(70)
+turt.penup()
+turt.forward(55)
+turt.left(110)
+turt.forward(100)
+
+
+#display Y
+
+
+turt.left(90)
+turt.pendown()
+
+turt.forward(50)
+turt.left(30)
+turt.forward(60)
+turt.backward(60)
+turt.right(60)
+turt.forward(60)
+turt.backward(60)
+turt.left(30)
+
+
+# go to Home
+
+turt.penup()
+turt.home()
+
+
+turt.color("snow")
+new.bgcolor("maroon")
+# setting third row
+
+turt.backward(300)
+turt.right(90)
+turt.forward(200)
+turt.left(180)
+
+turt.pendown()
+
+
+#display D
+
+
+turt.forward(100)
+turt.right(90)
+turt.forward(30)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(80)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(42)
+turt.right(90)
+turt.forward(5)
+turt.right(180)
+turt.forward(5)
+turt.penup()
+turt.left(90)
+turt.forward(60)
+turt.pendown()
+
+
+#display A
+
+
+turt.left(70)
+turt.forward(110)
+turt.right(70)
+turt.right(70)
+turt.forward(110)
+turt.left(180)
+turt.forward(55)
+turt.left(70)
+turt.forward(38)
+turt.left(180)
+
+turt.penup()
+
+turt.forward(38)
+turt.right(70)
+turt.forward(20)
+turt.left(20)
+turt.forward(40)
+turt.pendown()
+turt.left(50)
+turt.left(90)
+turt.forward(20)
+turt.right(90)
+
+#display D
+turt.left(90)
+turt.forward(80)
+turt.right(90)
+turt.forward(30)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(80)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(42)
+turt.right(90)
+turt.forward(5)
+turt.right(180)
+turt.forward(5)
+turt.penup()
+turt.left(90)
+turt.forward(70)
+turt.pendown()
+
+
+#display D
+
+turt.left(90)
+turt.forward(105)
+turt.right(90)
+turt.forward(30)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(80)
+turt.right(20)
+turt.forward(20)
+turt.right(70)
+turt.forward(42)
+turt.penup()
+turt.left(180)
+turt.forward(100)
+
+
+
+
+#dispaly Y
+
+
+turt.pendown()
+turt.left(90)
+turt.forward(50)
+turt.left(30)
+turt.forward(60)
+turt.backward(60)
+turt.right(60)
+turt.forward(60)
+turt.backward(60)
+turt.left(30)
+
+turt.penup()
+turt.left(180)
+turt.forward(50)
+turt.left(90)
+turt.forward(50)
+turt.right(90)
+turt.forward(100)
+turt.left(90)
+turt.pendown()
+
+
+#cake
+turt.width(3)
+turt.speed(5)
+#1block
+
+turt.fillcolor('red')
+turt.begin_fill()
+turt.forward(250)
+turt.left(90)
+turt.forward(75)
+turt.left(90)
+turt.forward(250)
+turt.left(90)
+turt.forward(75)
+
+turt.end_fill()
+#2block
+turt.fillcolor('chocolate')
+turt.left(180)
+turt.forward(75)
+turt.right(90)
+turt.forward(50)
+turt.begin_fill()
+turt.left(90)
+turt.forward(75)
+turt.right(90)
+turt.forward(150)
+turt.right(90)
+turt.forward(75)
+turt.end_fill()
+#3block
+turt.fillcolor('blue')
+turt.left(180)
+turt.forward(75)
+turt.left(90)
+turt.forward(25)
+turt.begin_fill()
+turt.right(90)
+turt.forward(65)
+turt.left(90)
+turt.forward(100)
+turt.left(90)
+turt.forward(65)
+turt.end_fill()
+turt.left(180)
+turt.forward(65)
+turt.width(1)
+turt.right(90)
+
+turt.forward(25)
+turt.left(90)
+turt.forward(50)
+turt.fillcolor()
+turt.begin_fill()
+turt.color('gold')
+turt.circle(5)
+turt.left(180)
+turt.end_fill()
+turt.penup()
+
+turt.forward(50)
+turt.left(90)
+turt.forward(50)
+turt.left(90)
+turt.pendown()
+turt.fillcolor()
+turt.begin_fill()
+turt.color('black')
+turt.forward(50)
+turt.end_fill()
+turt.fillcolor()
+turt.begin_fill()
+turt.color('gold')
+turt.circle(5)
+turt.end_fill()
+turt.left(180)
+turt.penup()
+turt.forward(50)
+
+
+timer_text=tur.Turtle()
+start=time.time()
+while time.time() - start<5:
+
+    new.update()
+
+
+
+turt.reset()
+
+
+
+
+#dispaly design 1
+from turtle import*
+import turtle as t
+t=t.Turtle()
+new=t.getscreen()
+
+
+new.bgcolor('black')
+t.hideturtle()
+t.goto(0,-10)
+
+t.pensize(3)
+t.color('red')
+t.begin_fill()
+t.left(140)
+t.forward(180)
+t.circle(-90,200)
+t.setheading(60)
+t.circle(-90,200)
+t.forward(178)
+t.end_fill()
+
+t.penup()
+t.goto(-85,130)
+t.pendown()
+t.color('white')
+t.write("I Love You",font=("verdana",25,"bold"))
+t.penup()
+t.goto(-65,170)
+t.pendown()
+t.color('white')
+t.write("DADDY...",font=("verdana",25,"bold"))
+t.penup()
+t.goto(-300,-55)
+t.pendown()
+t.color('white')
+t.write("HAPPY BIRTHDAY TO MY SUPPORTER...",font=("verdana",20,"bold"))
+t.penup()
+t.goto(-250,-100)
+t.pendown()
+t.write("CREATED BY YOUR FAMILY",font=("verdana",25,"bold"))
+
+t.penup()
+timer_text=tur.Turtle()
+start=time.time()
+while time.time() - start<5:
+
+    new.update()
+
+
+
+t.reset()
+
+
+
+
+#design fireworks
+
+import turtle
+import random
+
+
+wn = turtle.Screen()
+wn.setup(500,500)
+wn.bgcolor('black')
+
+myturtle = turtle.Turtle()
+myturtle.speed(0)
+myturtle.hideturtle()
+
+colors = [
+    'blue', 'red', 'yellow', 'orange', 'purple',  'pink', 'lime', 'green', 'gold', 'silver', 'violet'
+]
+
+
+def draw_fw(t):
+     x = random.randint(-400,400)
+     y = random.randint(-400,400)
+     t.penup()
+     t.goto(x,y)
+     t.pendown()
+     t.color(random.choice(colors))
+     d = random.randint(20,100)
+
+     for i in range(36):
+         t.forward(d)
+
+         t.left(90)
+         t.forward(1)
+         t.backward(1)
+         t.left(180)
+         t.forward(1)
+         t.backward(1)
+         t.left(90)
+         t.backward(d)
+         t.right(10)
+
+for i in range(15):
+    draw_fw(myturtle)
+
+myturtle.penup()
+myturtle.goto(0,200)
+myturtle.color('white')
+myturtle.write(" I'M THE LUCKIEST PERSON TO HAVE A DAD LIKE YOU.HAPPY BIRTHDAY DAD!",align="center",font=("verdana",24,"normal"))
+
+
+tur.mainloop()
