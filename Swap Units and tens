@@ -1,0 +1,25 @@
+Define a function swap_units_and_tens(int_num) that swaps the order between the ones digit and the tens digit in an integer number using the two functions from the previous exercise.
+The function shall return the result as an integer number.
+Running the function in the Python interpreter console should look like this:
+
+>>> swap_units_and_tens(123) 
+132
+
+
+Python3:
+int_num = input("Enter the number or integer")
+def unit(int_num):
+    
+    print(f"unit({int_num})")
+    print(int_num[-1])
+unit(int_num)
+def ten(int_num):
+    print(f"ten({int_num})")
+    print(int_num[-2])
+ten(int_num)
+def swap_units_and_tens(int_num):
+    swapped_num_str = int_num[:-2] + int_num[-1] + int_num[-2]
+    swap = swapped_num_str
+    print(f"swap({int_num})")
+    print(swap)
+swap_units_and_tens(int_num)
