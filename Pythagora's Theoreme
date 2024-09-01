@@ -1,0 +1,17 @@
+The Pythagoras’ Theorem for a right-angle triangle can be written as a2 + b2 = c2, where a
+and b are sides of the right angle and c is the hypotenuse. Write a function to compute the
+hypotenuse given sides a and b of the triangle. The result shall be returned as a number.
+Hint: You can use math.sqrt(num) or the ** operator to compute the square root of num.
+
+ 
+PYTHON3:
+import math
+
+a = int(input("Enter the value of a:"))
+b = int(input("Enter the value of b:"))
+
+
+c = math.sqrt((a**2)+(b**2))
+
+
+print("The result is:", c)
