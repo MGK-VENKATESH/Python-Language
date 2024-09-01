@@ -1,0 +1,29 @@
+Implement a simple guessing game.
+
+The rules for playing are:
+
+1.The program picks a random number from 1 up to 100.
+2.The player guesses a number.
+3.Depending on the guess, the program responds with one of three possible choices: (i)
+The guess was too high. (ii) The guess was too low. (iii) The guess was correct. 
+2. and 3. repeats until the guess is correct.
+4.The program presents how many guesses were used, thereafter the program terminates.
+Extra challenge: Ask the user before the game program finishes if the user like to play again. Y(es)/N(o). If the answer is Y, let the game start over. To make that happen you need another (outer) loop in your program.
+
+Python3:
+import random
+guess_count = 0
+random_int = random.randint(1,100)
+
+for guess in range(random_int):
+    guess = int(input("Enter an random guessed number"))
+    guess_count += 1
+    
+    if guess > random_int:
+        print("The guess was too high")
+    elif guess < random_int:
+        print("The guess was too low")
+    else:
+        print("The guess was correct")
+        break
+print("The number of guesses used:", guess_count)
