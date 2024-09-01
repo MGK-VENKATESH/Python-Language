@@ -1,0 +1,18 @@
+Write a function count_vowels(string) that takes in a word as an argument and returns the total number of vowels (’a’, ’e’, ’i’, ’o’, ’u’) in the word. The function shall return the result as an integer number.
+Run example:
+>>> count_vowels('elephant')
+3
+>>> count_vowels('apple')
+2
+
+Python3:
+def count_vowels(string):
+    count = 0
+    vowels = ['a', 'e', 'i', 'o', 'u']
+    for char in string:
+        if char.lower() in vowels:  
+            count += 1
+    return count 
+
+b = input("Enter a string: ")
+print("Number of vowels:", count_vowels(b))
