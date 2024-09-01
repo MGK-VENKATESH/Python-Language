@@ -1,0 +1,27 @@
+Write a program that performs calculation of the multiplication table for a number inputted by the user.
+Use a for-loop in your implementation.
+Running the program should look like this:
+
+This program prints out a multiplication table.
+Enter a number: 7
+0 * 7 = 0
+1 * 7 = 7
+2 * 7 = 14
+3 * 7 = 21
+4 * 7 = 28
+5 * 7 = 35
+6 * 7 = 42
+7 * 7 = 49
+8 * 7 = 56
+9 * 7 = 63
+
+PYTHON3:
+print("This program prints out a multiplication table.")
+n = int(input("Enter a number:"))
+for i in range(0,10):
+    
+    print(f"{i} * {n} = {i*n}")
+
+    i = i + 1
+    
+    
