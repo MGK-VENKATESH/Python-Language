@@ -1,0 +1,19 @@
+Define two functions unit(int_num)and ten(int_num)that picks up the ones digit and the tens digit in an integer number int_num. 
+The functions shall return the picked digit as an integer number. Running the functions in the Python interpreter console should look like this:
+
+>>> unit(123) 
+3
+>>> ten(123) 
+2
+
+PYTHON3:
+int_num = input("Enter the number or integer")
+def unit(int_num):
+    
+    print(f"unit({int_num})")
+    print(int_num[-1])
+unit(int_num)
+def ten(int_num):
+    print(f"ten({int_num})")
+    print(int_num[-2])
+ten(int_num)
