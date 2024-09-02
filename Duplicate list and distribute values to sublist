@@ -1,0 +1,14 @@
+Construct a function  distribute(my_item, my_list) that takes an element and a list of lists as arguments. The function shall return a new list that has a duplicate from the list content sent into to the function, where the value  my_item is inserted as an element in each sublist. The original list must not change. See example of a run below.
+
+>>> old_list = [[’kangar’], [’z’], [’f’]]
+>>> distribute(’oo’, old_list)
+[[’kangar’, ’oo’], [’z’, ’oo’], [’f’, ’oo’]]
+>>> old_list
+[[’kangar’], [’z’], [’f’]]
+
+Python3:
+def distribute(my_item, my_list):
+   new = [sublist+ [my_item] for sublist in my_list]
+   return new
+old_list = [['kangar'], ['z'], ['f']]
+print(distribute('oo', old_list))
