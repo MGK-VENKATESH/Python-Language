@@ -1,0 +1,25 @@
+The transpose of a matrix AT is obtained if you flip the matrix over its diagonal, that is it you switch the row and column indices of the matrix by producing another matrix . 
+
+Example with 3 × 2 matrix:
+
+              
+
+Write a function transpose(matrix) that returns the transpose of a 2D matrix as a nested list.
+Run example:
+
+>>> A = [[1, 2, 3], [4, 5, 6]]
+>>> transpose(A)
+[[1, 4], [2, 5], [3, 6]]
+>>> transpose([[1, 2]])
+[[1], [2]]
+>>> transpose([[3]])
+[[3]]
+ 
+Python3:
+def transpose(matrix):
+    if not matrix:
+        return []
+    transposed = [list(row) for row in zip(*matrix)]
+    return transposed
+a = [[1,2,3], [3,4,5]]
+print(transpose(a))
