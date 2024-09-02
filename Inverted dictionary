@@ -1,0 +1,23 @@
+Write a function invert_dictionary(my_dict) that takes a dictionary as an argument, and returns a new dictionary that inverts the keys and the values of the original dictionary.
+Run example:
+
+>>> invert_dictionary({'a':1, 'b':2, 'c':3, 'd':2})
+{1: ['a'], 2: ['b', 'd'], 3: ['c']}
+
+>>> invert_dictionary({'a':3, 'b':3, 'c':3})
+{3: ['a', 'c', 'b']}
+    
+>>> invert_dictionary({'a':2, 'b':1, 'c':2, 'd':1})
+{1: ['b', 'd'], 2: ['a', 'c']}
+PYTHON3:
+
+
+def invert_dict(my_dict):
+    inverted = {}
+    for key, value in my_dict.items():
+        if value not in inverted:
+            inverted[value] = []
+        inverted[value].append(key)
+    return inverted
+example = {'a':1, 'b':2, 'c':3, 'd':2}
+print(invert_dict(example))
