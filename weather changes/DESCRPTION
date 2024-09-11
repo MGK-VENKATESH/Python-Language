@@ -1,0 +1,112 @@
+Introduction
+In this assignment you are supposed to write a program that simulates transition between weather states. It is considered that there are four different states for the weather:
+
+'sunny'
+
+'cloudy'
+
+'rainy'
+
+'snowy'
+
+The weather is only in one of these states at each specific time (hour).
+
+The weather changes between these four states by two factors:
+
+Holding time: When in a state the weather stays in that state for a specific amount of time (hours) before changing to another state.
+
+Transition probabilities: After spending the holding time in one state the weather can change its state to one of other states (or again back to the same state). This changing is specified by a set of transition probabilities. For each state, the transition probabilities indicates the probability of changing to another state (or even the current state itself). In another word, the new state will be chosen by chance, however the chance (probability) is specified in the transition probabilities list.
+
+💡
+Scientific Hint
+The model required in this assignment is actually a type of Continuous-Time Markov Chain (with fixed holdings). For the purpose of this assignment you do not need to know about this concept, but for your own curiosity or deeper understanding of similar situations you may want to learn about that.
+
+Look at the following image to better understand the problem.
+
+markov.png
+Now consider these notes:
+
+The time unit in this simulation is hour.
+
+The holding time for each state is a fixed value (in hours).
+
+Since there are four states then there are four sets of transition probabilities. Each set corresponds to a transition from a state (eg 'cloudy') to all other states (including itself). In other words, there will be 4*4 =16 individual transition probability values.
+
+The transition probabilities can be a value from 0 to 1 (eg: [0.2,0.55,0,0.25]).
+
+The sum of all values in each list of transition is always 1 (apparently).
+
+A value of 0 in the transition list means there is no chance of transition from current state to that specific state.
+
+A value of 1 in the transition list means the current state will always change to that specific state (after spending the holding time).
+
+Program Specification
+You need to write a program in a file named assignment2.py
+
+Your code will be imported to a test.py that is provided to you (you do not write test.py yourself)
+
+You need to install numpy libraries in your python environment. (if you want to check Pylint score, you need to install pylint also, though not mandatory for assignment 2)
+
+You can use only these libraries: numpy.
+
+There are some features that you need to use by specification of the instruction (such as class, dictionary, generator functions …​)
+
+It is good to try to use map, zip
+
+Class Specification
+Consider these instructions when create the class:
+
+You should implement a class called WeatherSimulation.
+
+The constructor of the class receives two values:
+
+A dictionary type argument called transition_probabilities.
+
+A dictionary type argument called holding_times.
+
+The transition_probabilities keys represent the state names as string type (i.e sunny, cloudy, rainy, snowy). However, your program should not make assumption about the keys' names.
+
+The transition_probabilities values for the keys are dictionaries themselves, where the keys are strings representing state names. The values in these nested keys are probabilities. So, you already know that the transition_probabilities is a nested dictionary type. Look at the example code below and see my_transitions.
+
+The program should check if the sum of the transition_probabilities is 1 or not, if it is not it should through exception of type RuntimeError, with some message.
+
+The initial state for the simulation is 'sunny'.
+
+A method, called get_states() should return a list of all states (string) (Do not put state names in your code, this should be extracted from the initialization data)
+
+A method, called current_state() should return the current state (string)
+
+A method, called next_state() should change the current state to a new state, based on the values in the transition_probabilities.
+
+TIP: Use numpy.random.choice()
+
+A generator function should be implemented with name iterable() that yields current_state() in each call (so, it will go further in simulation step with each next() (the Python standard method))
+
+A method called simulate(hours) should receive the number of simulation rounds (hours) as input argument and run that many of steps of the simulation (i.e. next_state()). It should accumulate all incidents of each state and at the end return the relative percentage of each state occurrence in a list. The order of values of the list corresponds to the order of keys in the input transition probabilities.
+
+Hint: Try it for numbers above 10000, and you should see that the results will be almost stable (lets say +-10%)
+
+List of all methods (except the constructor):
+
+get_states() returns a list of all states
+
+current_state() returns the current state
+
+next_state() moves to the next state in simulation
+
+set_state(new_state) changes the current state to the new_state
+
+current_state_remaining_hours() returns the remaining hours in the current state.
+
+iterable() a generator function that yields the current state (and moves to the next one in the simulation with standard next() function)
+
+simulate(hours) runs the simulation for the amount of hours and returns a list of percentages that each value shows the percent of times that a state occurred in the simulation. Hint: assume that the implicit order of states in list is the same as the order states in the initial dictionary which pass to the class.
+
+#Sample of input data types
+my_transitions = {
+    'sunny':{'sunny':0.7, 'cloudy':0.3, 'rainy':0, 'snowy':0},
+    'cloudy':{'sunny':0.5, 'cloudy': 0.3, 'rainy':0.15, 'snowy':0.05},
+    'rainy':{'sunny':0.7, 'cloudy':0.2, 'rainy':0.15, 'snowy':0.05},
+    'snowy':{'sunny':0.7, 'cloudy':0.1, 'rainy':0.05, 'snowy':0.15}
+    }
+my_holding_times = {'sunny':1, 'cloudy':2, 'rainy':2, 'snowy':1}
