@@ -1,0 +1,446 @@
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.utils.class_weight import compute_class_weight
+import numpy as np
+import os
+
+# Dataset path
+data_dir = '/Users/mgkvenky/Desktop/data'
+
+# Define the squash activation function
+def squash(x, axis=-1):
+    s_squared_norm = tf.reduce_sum(tf.square(x), axis, keepdims=True)
+    scale = s_squared_norm / (1 + s_squared_norm) / tf.sqrt(s_squared_norm + tf.keras.backend.epsilon())
+    return scale * x
+
+# Define the CapsNet model
+def CapsNet(input_shape, n_class, n_route):
+    x = layers.Input(shape=input_shape)
+    
+    # Layer 1: Conv2D layer
+    conv1 = layers.Conv2D(256, 9, activation='relu')(x)
+    
+    # Layer 2: PrimaryCaps layer
+    primarycaps = layers.Conv2D(32, 9, strides=2, padding='valid', activation='relu')(conv1)
+    primarycaps = layers.Reshape((-1, 8))(primarycaps)
+    primarycaps = layers.Lambda(squash)(primarycaps)
+    
+    # Layer 3: DigitCaps layer
+    digitcaps = layers.Dense(16, activation=None)(primarycaps)
+    digitcaps = layers.Lambda(squash)(digitcaps)
+    
+    # Length layer
+    out_caps = layers.Lambda(lambda x: tf.sqrt(tf.reduce_sum(tf.square(x), -1)))(digitcaps)
+    
+    # Add a Dense layer to get the correct number of outputs
+    outputs = layers.Dense(n_class, activation='softmax')(out_caps)
+    
+    return models.Model(x, outputs)
+
+# Load and preprocess the data
+img_size = (64, 64)  # Adjust this based on your image size
+batch_size = 32
+
+# Add data augmentation
+datagen = ImageDataGenerator(
+    rescale=1./255,
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    horizontal_flip=True,
+    validation_split=0.2
+)
+
+# Split the data into train, validation, and test sets
+train_generator = datagen.flow_from_directory(
+    data_dir,
+    target_size=img_size,
+    batch_size=batch_size,
+    class_mode='categorical',
+    subset='training',
+    color_mode='grayscale',
+    seed=42
+)
+
+validation_generator = datagen.flow_from_directory(
+    data_dir,
+    target_size=img_size,
+    batch_size=batch_size,
+    class_mode='categorical',
+    subset='validation',
+    color_mode='grayscale',
+    seed=42
+)
+
+# Create a separate test set
+test_datagen = ImageDataGenerator(rescale=1./255)
+test_generator = test_datagen.flow_from_directory(
+    data_dir,
+    target_size=img_size,
+    batch_size=batch_size,
+    class_mode='categorical',
+    color_mode='grayscale',
+    shuffle=False
+)
+
+# Calculate class weights
+# Calculate class weights
+class_weights = compute_class_weight('balanced', classes=np.unique(train_generator.classes), y=train_generator.classes)
+class_weight_dict = dict(enumerate(class_weights))
+
+
+# Modify the margin loss function to include class weights
+def weighted_margin_loss(y_true, y_pred):
+    L = y_true * tf.square(tf.maximum(0., 0.9 - y_pred)) + \
+        0.5 * (1 - y_true) * tf.square(tf.maximum(0., y_pred - 0.1))
+    weights = tf.reduce_sum(y_true * tf.constant(list(class_weight_dict.values()), dtype=tf.float32), axis=1)
+    return tf.reduce_mean(tf.reduce_sum(L, axis=1) * weights)
+
+# Build the model
+input_shape = (64, 64, 1)  # Adjust this based on your image size
+n_class = 4  # Number of classes (cloudy, desert, green_area, water)
+n_route = 3  # Number of routing iterations
+
+model = CapsNet(input_shape, n_class, n_route)
+
+# Compile the model
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+
+# Custom training loop
+@tf.function
+def train_step(x, y):
+    with tf.GradientTape() as tape:
+        predictions = model(x, training=True)
+        loss = weighted_margin_loss(y, predictions)
+    gradients = tape.gradient(loss, model.trainable_variables)
+    optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+    return loss, predictions
+
+# Training loop
+epochs = 50
+for epoch in range(epochs):
+    print(f"Epoch {epoch+1}/{epochs}")
+    total_loss = 0
+    num_batches = 0
+    for x_batch, y_batch in train_generator:
+        loss, predictions = train_step(x_batch, y_batch)
+        total_loss += loss
+        num_batches += 1
+        if num_batches >= train_generator.samples // batch_size:
+            break
+    
+    avg_loss = total_loss / num_batches
+    
+    # Validation
+    val_losses = []
+    val_accuracies = []
+    num_val_batches = 0
+    for x_val, y_val in validation_generator:
+        val_predictions = model(x_val)
+        val_loss = weighted_margin_loss(y_val, val_predictions)
+        val_accuracy = tf.reduce_mean(tf.keras.metrics.categorical_accuracy(y_val, val_predictions))
+        val_losses.append(val_loss)
+        val_accuracies.append(val_accuracy)
+        num_val_batches += 1
+        if num_val_batches >= validation_generator.samples // batch_size:
+            break
+    
+    print(f"Training loss: {avg_loss:.4f}")
+    print(f"Validation loss: {tf.reduce_mean(val_losses):.4f}")
+    print(f"Validation accuracy: {tf.reduce_mean(val_accuracies):.4f}")
+
+# Evaluate the model on the validation set
+y_pred_val = []
+y_true_val = []
+
+num_eval_batches = 0
+for x_val, y_val in validation_generator:
+    batch_pred = model(x_val)
+    y_pred_val.extend(tf.argmax(batch_pred, axis=1).numpy())
+    y_true_val.extend(tf.argmax(y_val, axis=1).numpy())
+    num_eval_batches += 1
+    if num_eval_batches * batch_size >= validation_generator.samples:
+        break
+
+y_pred_val = np.array(y_pred_val)
+y_true_val = np.array(y_true_val)
+
+# Ensure we have the same number of predictions as true labels
+min_len = min(len(y_pred_val), len(y_true_val))
+y_pred_val = y_pred_val[:min_len]
+y_true_val = y_true_val[:min_len]
+
+print("Validation Set Results:")
+print(classification_report(y_true_val, y_pred_val, target_names=list(validation_generator.class_indices.keys())))
+print(confusion_matrix(y_true_val, y_pred_val))
+val_accuracy = np.mean(y_true_val == y_pred_val)
+print(f"Validation accuracy: {val_accuracy:.4f}")
+
+# Evaluate the model on the test set
+y_pred_test = []
+y_true_test = []
+
+num_test_batches = 0
+for x_test, y_test in test_generator:
+    batch_pred = model(x_test)
+    y_pred_test.extend(tf.argmax(batch_pred, axis=1).numpy())
+    y_true_test.extend(tf.argmax(y_test, axis=1).numpy())
+    num_test_batches += 1
+    if num_test_batches * batch_size >= test_generator.samples:
+        break
+
+y_pred_test = np.array(y_pred_test)
+y_true_test = np.array(y_true_test)
+
+# Ensure we have the same number of predictions as true labels
+min_len = min(len(y_pred_test), len(y_true_test))
+y_pred_test = y_pred_test[:min_len]
+y_true_test = y_true_test[:min_len]
+
+print("\nTest Set Results:")
+print(classification_report(y_true_test, y_pred_test, target_names=list(test_generator.class_indices.keys())))
+print(confusion_matrix(y_true_test, y_pred_test))
+test_accuracy = np.mean(y_true_test == y_pred_test)
+print(f"Test accuracy: {test_accuracy:.4f}")
+
+Output:
+Found 4505 images belonging to 4 classes.
+Found 1126 images belonging to 4 classes.
+Found 5631 images belonging to 4 classes.
+Epoch 1/50
+Training loss: 0.3015
+Validation loss: 0.2559
+Validation accuracy: 0.5054
+Epoch 2/50
+Training loss: 0.2426
+Validation loss: 0.2637
+Validation accuracy: 0.5643
+Epoch 3/50
+Training loss: 0.2478
+Validation loss: 0.2846
+Validation accuracy: 0.4449
+Epoch 4/50
+Training loss: 0.2424
+Validation loss: 0.2288
+Validation accuracy: 0.5967
+Epoch 5/50
+Training loss: 0.2327
+Validation loss: 0.2318
+Validation accuracy: 0.5762
+Epoch 6/50
+Training loss: 0.2356
+Validation loss: 0.2464
+Validation accuracy: 0.5533
+Epoch 7/50
+Training loss: 0.2322
+Validation loss: 0.2355
+Validation accuracy: 0.5946
+Epoch 8/50
+Training loss: 0.2333
+Validation loss: 0.2265
+Validation accuracy: 0.5682
+Epoch 9/50
+Training loss: 0.2339
+Validation loss: 0.2408
+Validation accuracy: 0.5631
+Epoch 10/50
+Training loss: 0.2321
+Validation loss: 0.2317
+Validation accuracy: 0.6565
+Epoch 11/50
+Training loss: 0.2304
+Validation loss: 0.2342
+Validation accuracy: 0.6271
+Epoch 12/50
+Training loss: 0.2280
+Validation loss: 0.2470
+Validation accuracy: 0.5565
+Epoch 13/50
+Training loss: 0.2318
+Validation loss: 0.2557
+Validation accuracy: 0.5557
+Epoch 14/50
+Training loss: 0.2316
+Validation loss: 0.2232
+Validation accuracy: 0.5774
+Epoch 15/50
+Training loss: 0.2263
+Validation loss: 0.2301
+Validation accuracy: 0.5500
+Epoch 16/50
+Training loss: 0.2277
+Validation loss: 0.2360
+Validation accuracy: 0.6283
+Epoch 17/50
+Training loss: 0.2289
+Validation loss: 0.2210
+Validation accuracy: 0.6039
+Epoch 18/50
+Training loss: 0.2274
+Validation loss: 0.2246
+Validation accuracy: 0.6408
+Epoch 19/50
+Training loss: 0.2295
+Validation loss: 0.2354
+Validation accuracy: 0.5842
+Epoch 20/50
+Training loss: 0.2280
+Validation loss: 0.2346
+Validation accuracy: 0.6333
+Epoch 21/50
+Training loss: 0.2252
+Validation loss: 0.2371
+Validation accuracy: 0.5771
+Epoch 22/50
+Training loss: 0.2258
+Validation loss: 0.2156
+Validation accuracy: 0.6250
+Epoch 23/50
+Training loss: 0.2245
+Validation loss: 0.2404
+Validation accuracy: 0.6476
+Epoch 24/50
+Training loss: 0.2235
+Validation loss: 0.2191
+Validation accuracy: 0.6092
+Epoch 25/50
+Training loss: 0.2301
+Validation loss: 0.2279
+Validation accuracy: 0.6131
+Epoch 26/50
+Training loss: 0.2234
+Validation loss: 0.2216
+Validation accuracy: 0.6241
+Epoch 27/50
+Training loss: 0.2270
+Validation loss: 0.2313
+Validation accuracy: 0.5571
+Epoch 28/50
+Training loss: 0.2269
+Validation loss: 0.2286
+Validation accuracy: 0.6098
+Epoch 29/50
+Training loss: 0.2227
+Validation loss: 0.2294
+Validation accuracy: 0.6030
+Epoch 30/50
+Training loss: 0.2230
+Validation loss: 0.2365
+Validation accuracy: 0.5696
+Epoch 31/50
+Training loss: 0.2270
+Validation loss: 0.2283
+Validation accuracy: 0.6149
+Epoch 32/50
+Training loss: 0.2217
+Validation loss: 0.2351
+Validation accuracy: 0.5804
+Epoch 33/50
+Training loss: 0.2281
+Validation loss: 0.2589
+Validation accuracy: 0.5560
+Epoch 34/50
+Training loss: 0.2252
+Validation loss: 0.2352
+Validation accuracy: 0.6131
+Epoch 35/50
+Training loss: 0.2264
+Validation loss: 0.2340
+Validation accuracy: 0.6494
+Epoch 36/50
+Training loss: 0.2249
+Validation loss: 0.2252
+Validation accuracy: 0.5979
+Epoch 37/50
+Training loss: 0.2274
+Validation loss: 0.2509
+Validation accuracy: 0.5580
+Epoch 38/50
+Training loss: 0.2257
+Validation loss: 0.2258
+Validation accuracy: 0.5860
+Epoch 39/50
+Training loss: 0.2256
+Validation loss: 0.2377
+Validation accuracy: 0.5967
+Epoch 40/50
+Training loss: 0.2206
+Validation loss: 0.2347
+Validation accuracy: 0.5795
+Epoch 41/50
+Training loss: 0.2231
+Validation loss: 0.2386
+Validation accuracy: 0.5726
+Epoch 42/50
+Training loss: 0.2275
+Validation loss: 0.2287
+Validation accuracy: 0.5830
+Epoch 43/50
+Training loss: 0.2232
+Validation loss: 0.2209
+Validation accuracy: 0.6208
+Epoch 44/50
+Training loss: 0.2239
+Validation loss: 0.2346
+Validation accuracy: 0.6235
+Epoch 45/50
+Training loss: 0.2247
+Validation loss: 0.2265
+Validation accuracy: 0.5813
+Epoch 46/50
+Training loss: 0.2306
+Validation loss: 0.2237
+Validation accuracy: 0.6039
+Epoch 47/50
+Training loss: 0.2210
+Validation loss: 0.2241
+Validation accuracy: 0.5824
+Epoch 48/50
+Training loss: 0.2228
+Validation loss: 0.2257
+Validation accuracy: 0.6250
+Epoch 49/50
+Training loss: 0.2250
+Validation loss: 0.2230
+Validation accuracy: 0.6128
+Epoch 50/50
+Training loss: 0.2319
+Validation loss: 0.2217
+Validation accuracy: 0.6164
+Validation Set Results:
+              precision    recall  f1-score   support
+
+      cloudy       0.61      0.36      0.45       315
+      desert       0.46      0.66      0.54       225
+  green_area       0.65      0.74      0.69       284
+       water       0.64      0.62      0.63       302
+
+    accuracy                           0.58      1126
+   macro avg       0.59      0.59      0.58      1126
+weighted avg       0.60      0.58      0.58      1126
+
+[[113 174   3  25]
+ [ 69 148   0   8]
+ [  0   0 209  75]
+ [  2   0 112 188]]
+Validation accuracy: 0.5844
+
+Test Set Results:
+              precision    recall  f1-score   support
+
+      cloudy       0.65      0.38      0.48      1500
+      desert       0.50      0.73      0.59      1131
+  green_area       0.70      0.78      0.74      1500
+       water       0.69      0.66      0.67      1500
+
+    accuracy                           0.63      5631
+   macro avg       0.63      0.64      0.62      5631
+weighted avg       0.64      0.63      0.62      5631
+
+[[ 565  817    8  110]
+ [ 294  824    0   13]
+ [   0    0 1174  326]
+ [  15    0  497  988]]
+Test accuracy: 0.6306
